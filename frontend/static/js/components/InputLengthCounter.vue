@@ -1,12 +1,13 @@
 <template>
     <span :class="{ bad: counter < minLength, good: counter >= minLength }">
         <slot></slot>
-        <span v-if="counter < minLength">💩</span>
-        <span v-if="counter >= minLength && counter < minLength + 100">🙂</span>
-        <span v-if="counter >= minLength + 100 && counter < minLength + 300">😎</span>
-        <span v-if="counter >= minLength + 300 && counter < minLength + 500">🚀</span>
-        <span v-if="counter >= minLength + 500">💎🚀👍</span>
-        {{ counter !== null ? counter : '-' }}&nbsp;&#47;&nbsp;{{ minLength }}
+        <span v-if="counter < minLength" key="poop">💩</span>
+        <span v-if="counter >= minLength && counter < minLength + 100" key="ok">🙂</span>
+        <span v-if="counter >= minLength + 100 && counter < minLength + 300" key="cool">😎</span>
+        <span v-if="counter >= minLength + 300 && counter < minLength + 500" key="awesome">🚀</span>
+        <span v-if="counter >= minLength + 500" key="star">💎🚀👍</span>
+        {{ counter !== null ? counter : "-" }}
+        <span v-if="counter < minLength">&nbsp;&#47;&nbsp;{{ minLength }}</span>
     </span>
 </template>
 
@@ -45,22 +46,22 @@ export default {
 
         this.counter = this.$target.value.length;
 
-        this.throttledCounterHandler = throttle(e => {
+        this.throttledCounterHandler = throttle((e) => {
             this.counter = e.target.value.length;
         }, this.delay);
 
-        this.$target.addEventListener('keyup', this.throttledCounterHandler);
+        this.$target.addEventListener("keyup", this.throttledCounterHandler);
     },
     beforeDestroy() {
         if (this.$target) {
-            this.$target.removeEventListener('keyup', this.throttledCounterHandler);
+            this.$target.removeEventListener("keyup", this.throttledCounterHandler);
         }
     },
-}
+};
 
-function throttle (fn, wait) {
+function throttle(fn, wait) {
     let inThrottle, lastFn, lastTime;
-    return function() {
+    return function () {
         const context = this,
             args = arguments;
         if (!inThrottle) {
@@ -69,7 +70,7 @@ function throttle (fn, wait) {
             inThrottle = true;
         } else {
             clearTimeout(lastFn);
-            lastFn = setTimeout(function() {
+            lastFn = setTimeout(function () {
                 if (Date.now() - lastTime >= wait) {
                     fn.apply(context, args);
                     lastTime = Date.now();
@@ -78,5 +79,4 @@ function throttle (fn, wait) {
         }
     };
 }
-
 </script>

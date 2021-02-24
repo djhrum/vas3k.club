@@ -8,7 +8,7 @@
     <div class="feed-sidebar-toggle-wrapper">
         <sidebar-toggler />
     </div>
-    <div class="feed-sidebar">
+    <aside class="feed-sidebar">
         <div class="feed-sidebar-block">
             <ul class="feed-sidebar-list feed-sidebar-menu">
                 <li>
@@ -18,7 +18,7 @@
                 </li>
                 <li>
                     <a href="{% url "people" %}">
-                        🌍 Коммьюнити
+                        🌍 Люди
                     </a>
                 </li>
                 <li>
@@ -38,7 +38,7 @@
                 </li>
                 <li>
                     <a href="{% url "feed_type" "post" %}" class="{% if post_type == "post" %}feed-sidebar-menu-selected{% endif %}">
-                        ✏️ Лонгриды
+                        📝 Посты
                     </a>
                 </li>
                 <li>
@@ -47,8 +47,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{% url "feed_type" "project" %}" class="{% if post_type == "project" %}feed-sidebar-menu-selected{% endif %}">
-                        🏗 Проекты
+                    <a href="{% url "feed_type" "event" %}" class="{% if post_type == "event" %}feed-sidebar-menu-selected{% endif %}">
+                        📅 События
                     </a>
                 </li>
             </ul>
@@ -62,7 +62,7 @@
                 {% endfor %}
             </div>
         </div>
-    </div>
+    </aside>
     <div class="feed-main">
         {% block feed_content %}
         {% endblock %}

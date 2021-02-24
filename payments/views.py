@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 
 from auth.helpers import auth_required
 from payments.models import Payment
-from payments.products import PRODUCTS, find_by_price_id
+from payments.products import PRODUCTS, find_by_price_id, TAX_RATE_VAT
 from payments.service import stripe
 from users.models.user import User
 
@@ -82,6 +82,7 @@ def pay(request):
         line_items=[{
             "price": product["stripe_id"],
             "quantity": 1,
+            "tax_rates": [TAX_RATE_VAT],
         }],
         **customer_data,
         mode="subscription" if is_recurrent else "payment",
@@ -142,6 +143,7 @@ def stripe_webhook(request):
             status=Payment.STATUS_SUCCESS,
             data=session,
         )
+        # todo: do we need throw error in case payment not found?
         product = PRODUCTS[payment.product_code]
         product["activator"](product, payment, payment.user)
         return HttpResponse("[ok]", status=200)
@@ -153,10 +155,11 @@ def stripe_webhook(request):
             return HttpResponse("[ok]", status=200)
 
         user = User.objects.filter(stripe_id=invoice["customer"]).first()
+        # todo: do we need throw error in case user not found?
         payment = Payment.create(
             reference=invoice["id"],
             user=user,
-            product=find_by_price_id(invoice["lines"][0]["plan"]["id"]),
+            product=find_by_price_id(invoice["lines"]["data"][0]["plan"]["id"]),
             data=invoice,
             status=Payment.STATUS_SUCCESS,
         )

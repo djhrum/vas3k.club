@@ -21,6 +21,7 @@ services:
     restart: always
     volumes:
       - ./frontend/static:/app/frontend/static
+      - ./gdpr/downloads:/app/gdpr/downloads
     depends_on:
       - postgres
       - redis
@@ -36,6 +37,17 @@ services:
       - postgres
       - redis
     ports: []
+
+  bot:
+    <<: *app
+    command: make docker-run-bot
+    container_name: club_bot
+    depends_on:
+      - club_app
+      - postgres
+      - redis
+    ports:
+      - "8816:8816"
 
   postgres:
     image: postgres:12

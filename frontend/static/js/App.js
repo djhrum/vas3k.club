@@ -8,7 +8,6 @@ import "./codemirror-4.inline-attachment";
 import { findParentForm, isCommunicationForm } from "./common/domUtils";
 
 const INITIAL_SYNC_DELAY = 50;
-const SECOND = 1000;
 
 const imageUploadOptions = {
     uploadUrl: imageUploadUrl,
@@ -19,17 +18,15 @@ const imageUploadOptions = {
     urlText: "![]({filename})",
     errorText: "Ошибка при загрузке файла :(",
     allowedTypes: [
-        // Images
         "image/jpeg",
         "image/png",
         "image/jpg",
         "image/gif",
-        // Videos (for animation only)
         "video/mp4",
-        "video/quicktime" // .mov (macOS' default record format)
+        "video/quicktime", // .mov (macOS' default record format)
     ],
     extraHeaders: {
-        "Accept": "application/json",
+        Accept: "application/json",
     },
     extraParams: {
         code: imageUploadCode,
@@ -39,9 +36,12 @@ const imageUploadOptions = {
 const defaultMarkdownEditorOptions = {
     autoDownloadFontAwesome: false,
     spellChecker: false,
+    nativeSpellcheck: true,
     forceSync: true,
+    status: false,
+    inputStyle: "contenteditable",
     tabSize: 4,
-}
+};
 
 /**
  * Initialize EasyMDE editor
@@ -59,9 +59,21 @@ function createMarkdownEditor(element, options) {
 
     // overriding default CodeMirror shortcuts
     editor.codemirror.addKeyMap({
-        'Home': 'goLineLeft', // move the cursor to the left side of the visual line it is on
-        'End': 'goLineRight', // move the cursor to the right side of the visual line it is on
-    })
+        Home: "goLineLeft", // move the cursor to the left side of the visual line it is on
+        End: "goLineRight", // move the cursor to the right side of the visual line it is on
+    });
+
+    // adding ability to fire events on the hidden element
+    if (element.dataset.listen) {
+        const events = element.dataset.listen.split(" ");
+        events.forEach((event) => {
+            try {
+                editor.codemirror.on(event, (e) => e.getTextArea().dispatchEvent(new Event(event)));
+            } catch (e) {
+                console.warn("Invalid event provided", event);
+            }
+        });
+    }
 
     return editor;
 }
@@ -118,7 +130,7 @@ const App = {
     },
 
     initializeMarkdownEditor() {
-        if (this.isMobile()) return; // we don't need fancy features on mobiles
+        if (this.isMobile()) return []; // we don't need fancy features on mobiles
 
         const fullMarkdownEditors = [...document.querySelectorAll(".markdown-editor-full")].reduce(
             (editors, element) => {
@@ -179,7 +191,7 @@ const App = {
                             title: "Insert code",
                         },
                     ],
-                })
+                });
 
                 return [...editors, editor];
             },
@@ -190,7 +202,6 @@ const App = {
             (editors, element) => {
                 const editor = createMarkdownEditor(element, {
                     toolbar: false,
-                    status:  false
                 });
 
                 return [...editors, editor];

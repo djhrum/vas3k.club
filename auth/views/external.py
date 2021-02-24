@@ -24,10 +24,11 @@ def external_login(request):
     payload = {
         "user_slug": me.slug,
         "user_name": me.full_name,
+        "user_email": me.email,
         "exp": datetime.utcnow() + settings.JWT_EXP_TIMEDELTA,
     }
 
-    jwt_token = jwt.encode(payload, settings.JWT_SECRET, settings.JWT_ALGORITHM).decode("utf-8")
+    jwt_token = jwt.encode(payload, settings.JWT_PRIVATE_KEY, settings.JWT_ALGORITHM).decode("utf-8")
 
     # TODO: implement proper url parsing + domain validation + query building
     if "?" in goto:

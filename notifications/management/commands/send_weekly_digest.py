@@ -8,10 +8,10 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.urls import reverse
 
-from bot.common import send_telegram_message, CLUB_CHANNEL, render_html_message
+from notifications.telegram.common import send_telegram_message, CLUB_CHANNEL, render_html_message
 from landing.models import GodSettings
 from notifications.email.sender import send_club_email
-from posts.models import Post
+from posts.models.post import Post
 from search.models import SearchIndex
 from users.models.user import User
 
@@ -56,7 +56,7 @@ class Command(BaseCommand):
                 text=no_footer_digest_html,
                 is_pinned_until=datetime.utcnow() + timedelta(days=1),
                 is_visible=True,
-                is_public=True,
+                is_public=False,
             )
         )
 
@@ -104,7 +104,7 @@ class Command(BaseCommand):
         send_telegram_message(
             chat=CLUB_CHANNEL,
             text=render_html_message("weekly_digest_announce.html", post=post),
-            disable_preview=False,
+            disable_preview=True,
             parse_mode=telegram.ParseMode.HTML,
         )
 

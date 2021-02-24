@@ -32,25 +32,14 @@
                     <span class="form-row-help form-row-help-wide">
                         Можно использовать <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">Markdown</a>.
                         Для загрузки картинок просто перетащите их в редактор.
-                        Еще он пока иногда глючит, поэтому перед публикацией длинного интро скопируйте его в блокнот чтобы не потерять :D
                     </span>
                 </div>
 
-                <div class="form-row form-row-checkbox">
-                    {{ form.is_public }}
-                    <label for="{{ form.is_public.id_for_label }}">Интро видно в Большой Интернет?</label>
-                </div>
-
-                {% if me.is_moderator %}
-                    <div class="form-row form-row-checkbox">
-                        {{ form.is_visible_on_main_page }}
-                        <label for="{{ form.is_visible_on_main_page.id_for_label }}">Интро видно на главной?</label>
+                <div class="form-row compose-form-text">
+                    <div class="block form-warning">
+                        ⚠️ После изменения интро оно снова попадет на ревью к нашим модераторам.
+                        Вам не придётся ждать модерации, однако если ваше интро вдруг перестанет соответствовать нашим стандартам качества — вас отправят проходить её повторно.
                     </div>
-                {% endif %}
-
-                <div class="block form-warning">
-                    ⚠️ После изменения интро оно снова попадет на ревью к нашим модераторам.
-                    Вам не придётся ждать модерации, однако если ваше интро вдруг перестанет соответствовать нашим стандартам качества — вас отправят проходить её повторно.
                 </div>
 
                 <div class="form-row form-row-space-between">

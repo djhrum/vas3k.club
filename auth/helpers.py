@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import jwt
 from django.shortcuts import redirect, render, get_object_or_404
 
-from auth.models import Session
+from auth.models import Session, Apps
 from club import settings
 from club.exceptions import AccessDenied, ApiAuthRequired, ApiAccessDenied
 from users.models.user import User
@@ -44,7 +44,7 @@ def user_by_token(token):
 
 def user_by_jwt(jwt_token):
     try:
-        payload = jwt.decode(jwt_token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+        payload = jwt.decode(jwt_token, settings.JWT_PUBLIC_KEY, algorithms=[settings.JWT_ALGORITHM])
     except (jwt.DecodeError, jwt.ExpiredSignatureError):
         return None, None  # bad jwt token
 
@@ -73,7 +73,7 @@ def check_user_permissions(request, **context):
             and not request.path.startswith("/auth/") \
             and not request.path.startswith("/intro/") \
             and not request.path.startswith("/network/") \
-            and not request.path.startswith("/telegram/"):
+            and not request.path.startswith("/messages/"):
 
         if request.me.membership_expires_at < datetime.utcnow():
             log.info("User membership expired. Redirecting to payments page...")

@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from django.template import loader
 from django_q.tasks import async_task
 
-from bot.common import send_telegram_message, Chat, render_html_message, send_telegram_image
+from notifications.telegram.common import Chat, render_html_message, send_telegram_image
 from notifications.email.sender import send_club_email
 from users.models.achievements import UserAchievement
 
@@ -20,7 +20,7 @@ def async_create_or_update_achievement(user_achievement: UserAchievement):
     user = user_achievement.user
     achievement = user_achievement.achievement
 
-    # telegram
+    # messages
     if user.is_club_member and user.telegram_id:
         if achievement.image:
             send_telegram_image(

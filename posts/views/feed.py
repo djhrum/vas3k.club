@@ -6,12 +6,14 @@ from django.shortcuts import get_object_or_404, render
 
 from auth.helpers import auth_required
 from common.pagination import paginate
-from posts.models import Post, Topic
+from posts.models.post import Post
+from posts.models.topics import Topic
 
 POST_TYPE_ALL = "all"
 
 ORDERING_ACTIVITY = "activity"
 ORDERING_NEW = "new"
+ORDERING_HOT = "hot"
 ORDERING_TOP = "top"
 ORDERING_TOP_WEEK = "top_week"
 ORDERING_TOP_MONTH = "top_month"
@@ -60,6 +62,8 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
             posts = posts.order_by("-published_at", "-created_at")
         elif ordering == ORDERING_TOP:
             posts = posts.order_by("-upvotes")
+        elif ordering == ORDERING_HOT:
+            posts = posts.order_by("-hotness")
         elif ordering == ORDERING_TOP_WEEK:
             posts = posts.filter(
                 published_at__gte=datetime.utcnow() - timedelta(days=7)
@@ -77,10 +81,11 @@ def feed(request, post_type=POST_TYPE_ALL, topic_slug=None, ordering=ORDERING_AC
         pinned_posts = posts.filter(is_pinned_until__gte=datetime.utcnow())
         posts = posts.exclude(id__in=[p.id for p in pinned_posts])
 
-    return render(request, "posts/feed.html", {
+    return render(request, "feed.html", {
         "post_type": post_type or POST_TYPE_ALL,
         "ordering": ordering,
         "topic": topic,
         "posts": paginate(request, posts),
         "pinned_posts": pinned_posts,
+        "date_month_ago": datetime.utcnow() - timedelta(days=30),
     })

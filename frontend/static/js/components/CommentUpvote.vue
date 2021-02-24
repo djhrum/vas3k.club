@@ -20,13 +20,14 @@ import ClubApi from "../common/api.service";
 export default {
     name: "CommentUpvote",
     props: {
-        comment: {
-            type: Object,
-            required: true,
-        },
         hoursToRetractVote: {
             type: Number,
-            default: 0
+            default: 0,
+        },
+        initialUpvotes: {
+            type: Number,
+            default: 0,
+            required: true,
         },
         initialIsVoted: {
             type: Boolean,
@@ -35,7 +36,7 @@ export default {
             },
         },
         initialUpvoteTimestamp: {
-            type: String
+            type: String,
         },
         isInline: {
             type: Boolean,
@@ -66,9 +67,9 @@ export default {
     },
     data() {
         return {
-            upvotes: this.comment.upvotes,
+            upvotes: this.initialUpvotes,
             isVoted: this.initialIsVoted,
-            upvotedTimestamp: this.initialUpvoteTimestamp && parseInt(this.initialUpvoteTimestamp)
+            upvotedTimestamp: this.initialUpvoteTimestamp && parseInt(this.initialUpvoteTimestamp),
         };
     },
     methods: {
@@ -77,12 +78,12 @@ export default {
                 return ClubApi.ajaxify(this.upvoteUrl, (data) => {
                     this.upvotes = parseInt(data.comment.upvotes);
                     this.isVoted = true;
-                    this.upvotedTimestamp = data.upvoted_timestamp
+                    this.upvotedTimestamp = data.upvoted_timestamp;
                 });
             }
 
             if (this.isVoted && this.getHoursSinceVote() <= this.hoursToRetractVote) {
-                return ClubApi.ajaxify(this.retractVoteUrl,  (data) => {
+                return ClubApi.ajaxify(this.retractVoteUrl, (data) => {
                     this.upvotes = parseInt(data.comment.upvotes);
                     if (data.success) {
                         this.isVoted = false;
@@ -98,10 +99,8 @@ export default {
             }
 
             const millisecondsInHour = 60 * 60 * 1000;
-            return (Date.now() - this.upvotedTimestamp)  / millisecondsInHour;
-        }
+            return (Date.now() - this.upvotedTimestamp) / millisecondsInHour;
+        },
     },
 };
 </script>
-
-<style scoped></style>

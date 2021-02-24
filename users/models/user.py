@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from uuid import uuid4
 
-from django.contrib.postgres.fields import JSONField, ArrayField
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import F
 
@@ -41,18 +41,19 @@ class User(models.Model, ModelDiffMixin):
     MODERATION_STATUS_ON_REVIEW = "on_review"
     MODERATION_STATUS_REJECTED = "rejected"
     MODERATION_STATUS_APPROVED = "approved"
+    MODERATION_STATUS_DELETED = "deleted"
     MODERATION_STATUSES = [
         (MODERATION_STATUS_INTRO, MODERATION_STATUS_INTRO),
         (MODERATION_STATUS_ON_REVIEW, MODERATION_STATUS_ON_REVIEW),
         (MODERATION_STATUS_REJECTED, MODERATION_STATUS_REJECTED),
         (MODERATION_STATUS_APPROVED, MODERATION_STATUS_APPROVED),
+        (MODERATION_STATUS_DELETED, MODERATION_STATUS_DELETED),
     ]
 
     DEFAULT_AVATAR = "https://i.vas3k.club/v.png"
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     slug = models.CharField(max_length=32, unique=True)
-    card_number = models.IntegerField(default=0)
 
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=128, null=False)
@@ -66,7 +67,7 @@ class User(models.Model, ModelDiffMixin):
     geo = models.ForeignKey(Geo, on_delete=models.SET_NULL, null=True)
     bio = models.TextField(null=True)
     contact = models.CharField(max_length=256, null=True)
-    hat = JSONField(null=True)
+    hat = models.JSONField(null=True)
 
     balance = models.IntegerField(default=0)
     upvotes = models.IntegerField(default=0)
@@ -82,7 +83,7 @@ class User(models.Model, ModelDiffMixin):
         default=MEMBERSHIP_PLATFORM_PATREON, null=False
     )
     patreon_id = models.CharField(max_length=128, null=True, unique=True)
-    membership_platform_data = JSONField(null=True)
+    membership_platform_data = models.JSONField(null=True)
 
     email_digest_type = models.CharField(
         max_length=16, choices=EMAIL_DIGEST_TYPES,
@@ -90,7 +91,7 @@ class User(models.Model, ModelDiffMixin):
     )
 
     telegram_id = models.CharField(max_length=128, null=True)
-    telegram_data = JSONField(null=True)
+    telegram_data = models.JSONField(null=True)
 
     stripe_id = models.CharField(max_length=128, null=True)
 
@@ -105,6 +106,8 @@ class User(models.Model, ModelDiffMixin):
     )
 
     roles = ArrayField(models.CharField(max_length=32, choices=ROLES), default=list, null=False)
+
+    deleted_at = models.DateTimeField(null=True)
 
     class Meta:
         db_table = "users"
@@ -126,6 +129,13 @@ class User(models.Model, ModelDiffMixin):
             "avatar": self.avatar,
             "moderation_status": self.moderation_status,
             "payment_status": "active" if self.membership_expires_at >= datetime.utcnow() else "inactive",
+            "membership_started_at": self.membership_started_at.isoformat(),
+            "membership_expires_at": self.membership_expires_at.isoformat(),
+            "company": self.company,
+            "position": self.position,
+            "city": self.city,
+            "country": self.country,
+            "created_at": self.created_at.isoformat(),
         }
 
     def update_last_activity(self):
@@ -135,6 +145,9 @@ class User(models.Model, ModelDiffMixin):
 
     def membership_days_left(self):
         return (self.membership_expires_at - datetime.utcnow()).total_seconds() // 60 // 60 / 24
+
+    def membership_months_left(self):
+        return self.membership_days_left() / 30
 
     def membership_years_left(self):
         return self.membership_days_left() / 365
@@ -164,7 +177,9 @@ class User(models.Model, ModelDiffMixin):
 
     @property
     def is_club_member(self):
-        return self.moderation_status == User.MODERATION_STATUS_APPROVED and not self.is_banned
+        return self.moderation_status == User.MODERATION_STATUS_APPROVED \
+               and not self.is_banned \
+               and self.deleted_at is None
 
     @property
     def is_paid_member(self):

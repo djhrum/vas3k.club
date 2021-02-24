@@ -9,14 +9,9 @@ from users.models.expertise import UserExpertise
 from common.forms import ImageUploadField
 
 
-class UserEditForm(ModelForm):
-    full_name = forms.CharField(
-        label="Имя",
-        required=True,
-        max_length=128
-    )
+class ProfileEditForm(ModelForm):
     avatar = ImageUploadField(
-        label="Обновить аватар",
+        label="Аватар",
         required=False,
         resize=(512, 512),
         convert_to="jpg",
@@ -56,7 +51,6 @@ class UserEditForm(ModelForm):
     class Meta:
         model = User
         fields = [
-            "full_name",
             "avatar",
             "company",
             "position",
@@ -110,7 +104,15 @@ class ExpertiseForm(ModelForm):
         super().clean()
         custom_expertise = self.cleaned_data.get("expertise_custom")
         if custom_expertise:
-            self.cleaned_data["expertise"] = custom_expertise
+            self.cleaned_data["expertise"] = UserExpertise.make_custom_expertise_slug(custom_expertise)
 
         if not self.cleaned_data["expertise"]:
             raise ValidationError("Name is required")
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        custom_expertise = self.cleaned_data.get("expertise_custom")
+        if custom_expertise:
+            instance.name = custom_expertise
+        return instance
+

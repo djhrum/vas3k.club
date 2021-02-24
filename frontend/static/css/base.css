@@ -13,25 +13,34 @@
         margin: 0 auto;
         max-width: 90%;
         padding: 20px 0;
-        font-size: 120%;
+        font-size: 130%;
     }
 
         .block-description > p:first-child {
             margin-top: 0;
         }
 
+        .block-description-center {
+            text-align: center;
+        }
+
+        .block-description li {
+            padding-bottom: 0.8em;
+        }
+
     .block-header {
         display: block;
-        font-size: 180%;
+        font-size: 200%;
         font-weight: 600;
         text-align: center;
         padding-top: 30px;
+        padding-bottom: 20px;
         margin: 0 auto;
     }
 
     .block-subheader {
         display: block;
-        font-size: 140%;
+        font-size: 150%;
         font-weight: 400;
         text-align: center;
         margin: 0 auto;
@@ -85,15 +94,22 @@
 
 .avatar {
     display: inline-block;
-    background-position: 50% 50%;
-    background-size: cover;
     border-radius: 50%;
     min-height: 20px;
     min-width: 20px;
     box-sizing: border-box;
     background-color: #bdc3c7;
     vertical-align: middle;
+    overflow: hidden;
+    background-position: 50% 50%;
+    background-size: cover;
 }
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
 .icon {
     width: 14px;
@@ -180,6 +196,11 @@
         padding: 5px 10px;
         font-size: 90%;
         font-weight: normal;
+    }
+
+    .button-red {
+        background-color: #ff1917;
+        border-color: #ff1917;
     }
 
 /* SLIDER THEME */
@@ -343,7 +364,7 @@ input[type=range]:focus::-ms-fill-upper {
 
     .form-title {
         display: block;
-        font-size: 230%;
+        font-size: 250%;
         font-weight: 600;
         text-align: center;
         padding-top: 20px;
@@ -401,6 +422,10 @@ input[type=range]:focus::-ms-fill-upper {
                 padding: 10px;
             }
 
+            .form-row input[type=radio] {
+                width: auto;
+            }
+
             .form-row input[type=text],
             .form-row input[type=email] {
                 text-align: center;
@@ -446,7 +471,7 @@ input[type=range]:focus::-ms-fill-upper {
         }
 
         .form-warning {
-            font-size: 110%;
+            font-size: 90%;
             text-align: center;
             background-color: rgba(243, 255, 81, 0.3);
         }
@@ -568,14 +593,19 @@ input[type=range]:focus::-ms-fill-upper {
 
     .topic-icon {
         display: inline-block;
-        background-position: 50% 50%;
-        background-size: cover;
         vertical-align: middle;
         width: 22px;
         height: 22px;
         border-radius: 50%;
         background-color: #FFF;
         border: solid 2px #FFF;
+        overflow: hidden;
+    }
+
+    .topic-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .topic-name {
@@ -648,5 +678,25 @@ img.emoji {
    height: 1.2em;
    width: 1.2em;
    margin: 0 .05em 0 .1em;
-   vertical-align: -0.1em;
+   vertical-align: -0.25em;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-80 {
+    font-size: 80%;
+}
+
+.text-120 {
+    font-size: 120%;
+}
+
+.text-140 {
+    font-size: 140%;
+}
+
+.text-200 {
+    font-size: 200%;
 }

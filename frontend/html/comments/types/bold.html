@@ -5,8 +5,8 @@
     <div class="comment-header">
         <div class="user user-small">
             <span class="user-avatar">
-                <a href="{% url "profile" comment.author.slug %}">
-                    <span class="avatar" style="background-image: url('{{ comment.author.get_avatar }}');"></span>
+                <a class="avatar" href="{% url "profile" comment.author.slug %}">
+                    <img src="{{ comment.author.get_avatar }}" alt="Аватар {{ comment.author.full_name }}" loading="lazy" />
                 </a>
             </span>
             <span class="user-info">
@@ -21,8 +21,8 @@
         </div>
     </div>
     <div class="comment-rating">
-        <comment-upvote :comment="JSON.parse('{{ comment.to_dict | jsonify }}')"
-                         v-bind:hours-to-retract-vote={{settings.RETRACT_VOTE_IN_HOURS}}
+        <comment-upvote :initial-upvotes="{{ comment.upvotes }}"
+                         :hours-to-retract-vote="{{settings.RETRACT_VOTE_IN_HOURS}}"
                          upvote-url="{% url "upvote_comment" comment.id %}"
                          retract-vote-url="{% url "retract_comment_vote" comment.id %}"
                          {% if comment.is_voted %}
@@ -54,6 +54,8 @@
             <a href="{% url "edit_comment" comment.id %}" class="comment-edit-button comment-button-hidden"><i class="fas fa-edit"></i></a>
         {% endif %}
 
-        <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.id }}', '', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
+        {% if me and comment.post.is_commentable %}
+            <span class="comment-reply-button" v-on:click="showReplyForm('{{ comment.id }}', '{{ comment.author.slug }}', true)"><i class="fas fa-reply"></i>&nbsp;ответить</span>
+        {% endif %}
     </div>
 </div>

@@ -26,7 +26,7 @@ ACHIEVEMENTS = [
     }),
     ("oscar", {
         "name": "Оскар за посты",
-        "description": "Награда за написание особенно офигенных постов, ни один раз занимавших первые места в топах",
+        "description": "Награда за написание особенно офигенных постов, не один раз занимавших первые места в топах",
         "image": "https://i.vas3k.club/3bd.png",
         "style": "background-color: #2F9599;",
     }),
@@ -41,6 +41,12 @@ ACHIEVEMENTS = [
         "description": "Пятюня за активную помощь другим участника Клуба в комментариях и в жизни",
         "image": "https://i.vas3k.club/3bo.png",
         "style": "background-color: #4D446F;",
+    }),
+    ("org", {
+        "name": "За Движ",
+        "description": "Ачивка за организацию движух внутри Клуба",
+        "image": "https://vas3k.club/static/images/achievements/org.png",
+        "style": "background-color: #FF4E50; font-size: 185%;",
     }),
     ("offline", {
         "name": "За взятие офлайна",
@@ -86,7 +92,12 @@ ACHIEVEMENTS = [
         "image": "https://i.vas3k.club/3d1.png",
         "style": "background-color: #F04393; font-size: 100%;",
     }),
+    ("2020", {
+        "name": "2020",
+        "description": "Призовое место в итогах 2020 года",
+        "image": "https://vas3k.club/static/images/achievements/2020.png",
+        "style": "background-color: #FC913A; font-size: 190%;",
+    }),
 ]
-
 
 # VIP: https://i.vas3k.club/3cb.png
